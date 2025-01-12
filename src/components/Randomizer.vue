@@ -83,10 +83,10 @@
       <!-- Right Side: Randomized Team -->
       <v-col cols="6">
         <v-card class="pa-3">
-          <v-card-title>
+          <v-card-title class="text-center">
             Vanguard: {{ teamComposition.Vanguard }} | Duelist: {{ teamComposition.Duelist }} | Strategist: {{ teamComposition.Strategist }}
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="text-center">
             <v-btn color="primary" @click="randomizeTeam" :disabled="totalRoles !== 6">
               Randomize Team
             </v-btn>
@@ -99,7 +99,7 @@
                     max-width="80"
                     class="mx-auto"
                   ></v-img>
-                  <v-card-title class="text-h6">{{ assignment.player }}</v-card-title>
+                  <v-card-title class="text-h6">{{ assignment.player || "Player " + (index + 1)}}</v-card-title>
                   <v-card-subtitle class="text-body-2">{{ assignment.role }}</v-card-subtitle>
                   <v-card-subtitle class="text-body-2">{{ assignment.name }}</v-card-subtitle>
                 </v-card>
@@ -109,11 +109,28 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- Error Dialog Box -->
+    <v-dialog v-model="errorDialog" max-width="400px">
+      <v-card>
+        <v-card-title class="headline">Error</v-card-title>
+        <v-card-subtitle v-for="error in errorMessages">
+          {{ error }}
+        </v-card-subtitle>
+        <v-card-actions>
+          <v-btn color="primary" @click="closeErrorDialog">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-container>
+  <CharacterSelecter />
 </template>
+
 
 <script>
 import characters from '@/data/characters.json';
+import CharacterSelecter from '@/components/CharacterSelecter.vue';
 
 export default {
   data() {
@@ -127,6 +144,8 @@ export default {
         Strategist: 2,
       },
       settingsDialog: false, // Controls the visibility of the settings dialog
+      errorDialog: false,
+      errorMessages: "",
     };
   },
   computed: {
@@ -177,10 +196,27 @@ export default {
 
       // Clone characters to avoid mutating the original JSON
       const roleCharacters = {
-        Vanguard: [...this.characters.Vanguard],
-        Duelist: [...this.characters.Duelist],
-        Strategist: [...this.characters.Strategist],
+        Vanguard: this.characters.Vanguard.filter(character => !character.disabled),
+        Duelist: this.characters.Duelist.filter(character => !character.disabled),
+        Strategist: this.characters.Strategist.filter(character => !character.disabled),
       };
+
+      // Display an error if not enough characters are enabled
+      var errors = []
+      if (roleCharacters["Vanguard"].length < this.teamComposition.Vanguard) {
+        errors.push("There are not enough Vanguards selected")
+      }
+      if (roleCharacters["Duelist"].length < this.teamComposition.Vanguard) {
+        errors.push("There are not enough Duelists selected")
+      }
+      if (roleCharacters["Strategist"].length < this.teamComposition.Vanguard) {
+        errors.push("There are not enough Strategists selected")
+      }
+
+      if (errors.length > 0) {
+        this.showErrorDialog(errors)
+        return;
+      }
 
       // Assign characters to players
       this.randomizedTeam = this.players.map((player, index) => {
@@ -194,6 +230,15 @@ export default {
       // Sort by role to group characters together in the UI
       const roleOrder = { Vanguard: 0, Duelist: 1, Strategist: 2 };
       this.randomizedTeam.sort((a, b) => roleOrder[a.role] - roleOrder[b.role]);
+    },
+
+    showErrorDialog(message) {
+      this.errorMessages = message;
+      this.errorDialog = true; // Show the error dialog
+    },
+
+    closeErrorDialog() {
+      this.errorDialog = false; // Close the error dialog
     },
   },
 };
