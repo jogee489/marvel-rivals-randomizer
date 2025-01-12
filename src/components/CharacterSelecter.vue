@@ -1,7 +1,8 @@
 <template>
+  <v-card>
     <v-card-title class="text-center">
-        <v-btn class = "mx-2" color="primary" @click="toggleDisable(false)">Enable All</v-btn>
-        <v-btn class = "mx-2" color="primary" @click="toggleDisable(true)">Disable All</v-btn>
+        <v-btn class="mx-2" color="primary" @click="toggleDisable(false)">Enable All</v-btn>
+        <v-btn class="mx-2" color="primary" @click="toggleDisable(true)">Disable All</v-btn>
     </v-card-title>
     <div v-for="(group, roleName) in characters" :key="roleName">
       <v-card-title class="text-center"> {{ roleName }} </v-card-title>
@@ -22,6 +23,7 @@
         </v-col>
     </v-row>
   </div>
+</v-card>
 </template>
 
 <script>

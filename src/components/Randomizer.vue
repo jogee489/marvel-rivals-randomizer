@@ -7,8 +7,11 @@
           <v-card-title>
             Player Names
             <v-spacer></v-spacer>
-            <v-btn icon @click="settingsDialog = true">
+            <v-btn class="mx-1" icon @click="settingsDialog = true">
               <v-icon>mdi-cog</v-icon>
+            </v-btn>
+            <v-btn class="mx-1" icon @click="characterDialog = true">
+              <v-icon>mdi-account-multiple</v-icon>
             </v-btn>
           </v-card-title>
           <v-card-text>
@@ -124,7 +127,10 @@
     </v-dialog>
 
   </v-container>
-  <CharacterSelecter />
+  <v-dialog v-model="characterDialog">
+    <CharacterSelecter />
+    <v-btn color="primary" @click="characterDialog = false">Close</v-btn>
+  </v-dialog>
 </template>
 
 
@@ -146,6 +152,7 @@ export default {
       settingsDialog: false, // Controls the visibility of the settings dialog
       errorDialog: false,
       errorMessages: "",
+      characterDialog: false,
     };
   },
   computed: {
