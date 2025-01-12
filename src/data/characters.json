@@ -1,0 +1,45 @@
+{
+    "Vanguard": [
+      { "name": "Venom", "image": "/assets/images/venom.png" },
+      { "name": "Peni Parker", "image": "/assets/images/peni_parker.png" },
+      { "name": "Thor", "image": "/assets/images/thor.png" },
+      { "name": "Doctor Strange", "image": "/assets/images/doctor_strange.png" },
+      { "name": "Captain America", "image": "/assets/images/captain_america.png" },
+      { "name": "Hulk", "image": "/assets/images/hulk.png" },
+      { "name": "Groot", "image": "/assets/images/groot.png" },
+      { "name": "Magneto", "image": "/assets/images/magneto.png" }
+    ],
+    "Duelist": [
+      { "name": "The Punisher", "image": "/assets/images/the_punisher.png" },
+      { "name": "Moon Knight", "image": "/assets/images/moon_knight.png" },
+      { "name": "Iron Man", "image": "/assets/images/iron_man.png" },
+      { "name": "Scarlet Witch", "image": "/assets/images/scarlet_witch.png" },
+      { "name": "Star-Lord", "image": "/assets/images/star_lord.png" },
+      { "name": "Hawkeye", "image": "/assets/images/hawkeye.png" },
+      { "name": "Psylocke", "image": "/assets/images/psylocke.png" },
+      { "name": "Winter Soldier", "image": "/assets/images/winter_soldier.png" },
+      { "name": "Spider-Man", "image": "/assets/images/spider_man.png" },
+      { "name": "Hela", "image": "/assets/images/hela.png" },
+      { "name": "Iron Fist", "image": "/assets/images/iron_fist.png" },
+      { "name": "Magik", "image": "/assets/images/magik.png" },
+      { "name": "Squirrel Girl", "image": "/assets/images/squirrel_girl.png" },
+      { "name": "Black Panther", "image": "/assets/images/black_panther.png" },
+      { "name": "Wolverine", "image": "/assets/images/wolverine.png" },
+      { "name": "Black Widow", "image": "/assets/images/black_widow.png" },
+      { "name": "Namor", "image": "/assets/images/namor.png" },
+      { "name": "Storm", "image": "/assets/images/storm.png" },
+      { "name": "Mr. Fantastic", "image": "/assets/images/mr_fantastic.png" }
+
+    ],
+    "Strategist": [
+      { "name": "Jeff the Land Shark", "image": "/assets/images/jeff_the_land_shark.png" },
+      { "name": "Cloak & Dagger", "image": "/assets/images/cloak_and_dagger.png" },
+      { "name": "Mantis", "image": "/assets/images/mantis.png" },
+      { "name": "Luna Snow", "image": "/assets/images/luna_snow.png" },
+      { "name": "Rocket Raccoon", "image": "/assets/images/rocket_raccoon.png" },
+      { "name": "Loki", "image": "/assets/images/loki.png" },
+      { "name": "Adam Warlock", "image": "/assets/images/adam_warlock.png" },
+      { "name": "Invisible Woman", "image": "/assets/images/invisible_woman.png" }
+    ]
+  }
+  
