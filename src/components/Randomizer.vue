@@ -14,17 +14,23 @@
               <v-icon>mdi-account-multiple</v-icon>
             </v-btn>
           </v-card-title>
-          <v-card-text>
-            <v-text-field
-              v-for="(player, index) in players"
-              :key="index"
-              v-model="players[index]"
-              label="Player Name"
-              :placeholder="`Player ${index + 1}`"
-              outlined
-              dense
-              class="mb-2"
-            ></v-text-field>
+          <v-card-text >
+            <v-row dense v-for="(player, index) in players" :key="index">
+              <v-text-field
+                v-model="player.name"
+                label="Player Name"
+                :placeholder="`Player ${index + 1}`"
+                outlined
+                class="mb-2"
+              ></v-text-field>
+              <v-img v-for="role in characterRoles"
+                :class="{'clickable': player[role.name], 'inactive': !player[role.name]}"
+                @click="toggleRole(role.name, player)"
+                :src="role.icon"
+                max-height="60"
+                max-width="60">
+              </v-img>
+            </v-row>
           </v-card-text>
         </v-card>
 
@@ -102,7 +108,7 @@
                     max-width="80"
                     class="mx-auto"
                   ></v-img>
-                  <v-card-title class="text-h6">{{ assignment.player || "Player " + (index + 1)}}</v-card-title>
+                  <v-card-title class="text-h6">{{ assignment.player.name || "Player " + (index + 1)}}</v-card-title>
                   <v-card-subtitle class="text-body-2">{{ assignment.role }}</v-card-subtitle>
                   <v-card-subtitle class="text-body-2">{{ assignment.name }}</v-card-subtitle>
                 </v-card>
@@ -136,14 +142,24 @@
 
 <script>
 import characters from '@/data/characters.json';
+import characterRoles from '@/data/character_roles.json';
 import CharacterSelecter from '@/components/CharacterSelecter.vue';
 
 export default {
   data() {
     return {
-      players: Array(6).fill(''), // Fixed list of 6 players
+      players:[
+        {name:'', Vanguard: true, Duelist: true, Strategist: true},
+        {name:'', Vanguard: true, Duelist: true, Strategist: true},
+        {name:'', Vanguard: true, Duelist: true, Strategist: true},
+        {name:'', Vanguard: true, Duelist: true, Strategist: true},
+        {name:'', Vanguard: true, Duelist: true, Strategist: true},
+        {name:'', Vanguard: true, Duelist: true, Strategist: true}
+      ],
+      //players: Array(6).fill(''), // Fixed list of 6 players
       randomizedTeam: [],
       characters, // Load characters from JSON file
+      characterRoles,
       teamComposition: {
         Vanguard: 2,
         Duelist: 2,
@@ -151,7 +167,7 @@ export default {
       },
       settingsDialog: false, // Controls the visibility of the settings dialog
       errorDialog: false,
-      errorMessages: "",
+      errorMessages: [],
       characterDialog: false,
     };
   },
@@ -209,19 +225,19 @@ export default {
       };
 
       // Display an error if not enough characters are enabled
-      var errors = []
       if (roleCharacters["Vanguard"].length < this.teamComposition.Vanguard) {
-        errors.push("There are not enough Vanguards selected")
+        this.errorMessages.push("There are not enough Vanguards selected")
       }
-      if (roleCharacters["Duelist"].length < this.teamComposition.Vanguard) {
-        errors.push("There are not enough Duelists selected")
+      if (roleCharacters["Duelist"].length < this.teamComposition.Duelist) {
+        this.errorMessages.push("There are not enough Duelists selected")
       }
-      if (roleCharacters["Strategist"].length < this.teamComposition.Vanguard) {
-        errors.push("There are not enough Strategists selected")
+      if (roleCharacters["Strategist"].length < this.teamComposition.Strategist) {
+        this.errorMessages.push("There are not enough Strategists selected")
       }
 
-      if (errors.length > 0) {
-        this.showErrorDialog(errors)
+      this.validatePlayerRoles()
+      if (this.errorMessages.length > 0) {
+        this.showErrorDialog();
         return;
       }
 
@@ -239,14 +255,52 @@ export default {
       this.randomizedTeam.sort((a, b) => roleOrder[a.role] - roleOrder[b.role]);
     },
 
-    showErrorDialog(message) {
-      this.errorMessages = message;
+    toggleRole(roleName, player) {
+      player[roleName] = !player[roleName];
+    },
+
+    showErrorDialog() {
       this.errorDialog = true; // Show the error dialog
     },
 
     closeErrorDialog() {
+      this.errorMessages = []
       this.errorDialog = false; // Close the error dialog
     },
+
+    // Ensure that the players have roles enabled such that
+    // the team composition can be met
+    validatePlayerRoles() {
+      const { Vanguard, Duelist, Strategist } = this.teamComposition;
+      var vanguards = 0;
+      var duelists = 0;
+      var strategists = 0;
+      this.players.forEach(player => {
+        if (player.Vanguard) vanguards++;
+        if (player.Duelist) duelists++;
+        if (player.Strategist) strategists++;
+      });
+      var errors = []
+      if (vanguards < this.teamComposition.Vanguard) {
+        this.errorMessages.push("Not enough players can be Vanguards");
+      }
+      if (duelists < this.teamComposition.Duelist) {
+        this.errorMessages.push("Not enough players can be Duelists");
+      }
+      if (strategists < this.teamComposition.Strategist) {
+        this.errorMessages.push("Not enough players can be Strategists");
+      }
+    }
+    /*
+    players:[
+        {name:'', Vanguard: true, Duelist: true, Strategist: true},
+        {name:'', Vanguard: true, Duelist: true, Strategist: true},
+        {name:'', Vanguard: true, Duelist: true, Strategist: true},
+        {name:'', Vanguard: true, Duelist: true, Strategist: true},
+        {name:'', Vanguard: true, Duelist: true, Strategist: true},
+        {name:'', Vanguard: true, Duelist: true, Strategist: true}
+      ],
+    */
   },
 };
 </script>
@@ -256,5 +310,19 @@ export default {
   text-align: right;
   font-size: 14px;
   color: #666;
+}
+
+.clickable {
+  position: relative;
+  padding: 0.1em 0.1em;
+  border: 0;
+  border-radius: 0.5em;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.inactive {
+  cursor: pointer;
+  opacity: 0.5;
 }
 </style>
