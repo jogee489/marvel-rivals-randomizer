@@ -145,18 +145,21 @@ import characters from '@/data/characters.json';
 import characterRoles from '@/data/character_roles.json';
 import CharacterSelecter from '@/components/CharacterSelecter.vue';
 
+const CHARACTER_ROLES = ["Vanguard", "Duelist", "Strategist"]
+
 export default {
   data() {
     return {
-      players:[
+      /*players:[
         {name:'', Vanguard: true, Duelist: true, Strategist: true},
         {name:'', Vanguard: true, Duelist: true, Strategist: true},
         {name:'', Vanguard: true, Duelist: true, Strategist: true},
         {name:'', Vanguard: true, Duelist: true, Strategist: true},
         {name:'', Vanguard: true, Duelist: true, Strategist: true},
         {name:'', Vanguard: true, Duelist: true, Strategist: true}
-      ],
+      ],*/
       //players: Array(6).fill(''), // Fixed list of 6 players
+      players: Array.from({length: 6}, () => {return {name:'', Vanguard: true, Duelist: true, Strategist: true}}),
       randomizedTeam: [],
       characters, // Load characters from JSON file
       characterRoles,
@@ -164,6 +167,11 @@ export default {
         Vanguard: 2,
         Duelist: 2,
         Strategist: 2,
+      },
+      desiredRoleCount: {
+        Vanguard: 6,
+        Duelist: 6,
+        Strategist: 6,
       },
       settingsDialog: false, // Controls the visibility of the settings dialog
       errorDialog: false,
@@ -206,6 +214,7 @@ export default {
     },
     randomizeTeam() {
       const { Vanguard, Duelist, Strategist } = this.teamComposition;
+      this.errorMessages = [];
 
       // Create roles array based on user composition
       const roles = [
@@ -225,15 +234,12 @@ export default {
       };
 
       // Display an error if not enough characters are enabled
-      if (roleCharacters["Vanguard"].length < this.teamComposition.Vanguard) {
-        this.errorMessages.push("There are not enough Vanguards selected")
-      }
-      if (roleCharacters["Duelist"].length < this.teamComposition.Duelist) {
-        this.errorMessages.push("There are not enough Duelists selected")
-      }
-      if (roleCharacters["Strategist"].length < this.teamComposition.Strategist) {
-        this.errorMessages.push("There are not enough Strategists selected")
-      }
+      CHARACTER_ROLES.forEach(roleName => {
+        if (roleCharacters[roleName].length < this.teamComposition[roleName]) {
+          console.log(roleName);
+          this.errorMessages.push("Character error: not enough " + roleName +"s selected");
+        }
+      });
 
       this.validatePlayerRoles()
       if (this.errorMessages.length > 0) {
@@ -264,43 +270,26 @@ export default {
     },
 
     closeErrorDialog() {
-      this.errorMessages = []
+      this.errorMessages = [];
       this.errorDialog = false; // Close the error dialog
     },
 
     // Ensure that the players have roles enabled such that
     // the team composition can be met
     validatePlayerRoles() {
-      const { Vanguard, Duelist, Strategist } = this.teamComposition;
-      var vanguards = 0;
-      var duelists = 0;
-      var strategists = 0;
+      var currentCounts = {Vanguard: 0, Duelist: 0, Strategist: 0}
       this.players.forEach(player => {
-        if (player.Vanguard) vanguards++;
-        if (player.Duelist) duelists++;
-        if (player.Strategist) strategists++;
+        CHARACTER_ROLES.forEach(roleName => {
+          if (player[roleName]) currentCounts[roleName]++;
+        })
       });
-      var errors = []
-      if (vanguards < this.teamComposition.Vanguard) {
-        this.errorMessages.push("Not enough players can be Vanguards");
-      }
-      if (duelists < this.teamComposition.Duelist) {
-        this.errorMessages.push("Not enough players can be Duelists");
-      }
-      if (strategists < this.teamComposition.Strategist) {
-        this.errorMessages.push("Not enough players can be Strategists");
-      }
+      CHARACTER_ROLES.forEach(role => {
+        if (currentCounts[role] < this.teamComposition[role]) {
+          this.errorMessages.push("Player error: more players need to be " + role);
+        }
+      });
+      this.desiredRoleCount = currentCounts;
     }
-    /*
-    players:[
-        {name:'', Vanguard: true, Duelist: true, Strategist: true},
-        {name:'', Vanguard: true, Duelist: true, Strategist: true},
-        {name:'', Vanguard: true, Duelist: true, Strategist: true},
-        {name:'', Vanguard: true, Duelist: true, Strategist: true},
-        {name:'', Vanguard: true, Duelist: true, Strategist: true},
-        {name:'', Vanguard: true, Duelist: true, Strategist: true}
-      ],
-    */
   },
 };
 </script>
