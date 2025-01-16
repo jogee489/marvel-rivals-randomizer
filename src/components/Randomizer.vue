@@ -108,7 +108,7 @@
                     max-width="80"
                     class="mx-auto"
                   ></v-img>
-                  <v-card-title class="text-h6">{{ assignment.player.name || "Player " + (index + 1)}}</v-card-title>
+                  <v-card-title class="text-h6">{{ assignment.player.name }}</v-card-title>
                   <v-card-subtitle class="text-body-2">{{ assignment.role }}</v-card-subtitle>
                   <v-card-subtitle class="text-body-2">{{ assignment.name }}</v-card-subtitle>
                 </v-card>
@@ -150,16 +150,9 @@ const CHARACTER_ROLES = ["Vanguard", "Duelist", "Strategist"]
 export default {
   data() {
     return {
-      /*players:[
-        {name:'', Vanguard: true, Duelist: true, Strategist: true},
-        {name:'', Vanguard: true, Duelist: true, Strategist: true},
-        {name:'', Vanguard: true, Duelist: true, Strategist: true},
-        {name:'', Vanguard: true, Duelist: true, Strategist: true},
-        {name:'', Vanguard: true, Duelist: true, Strategist: true},
-        {name:'', Vanguard: true, Duelist: true, Strategist: true}
-      ],*/
-      //players: Array(6).fill(''), // Fixed list of 6 players
-      players: Array.from({length: 6}, () => {return {name:'', Vanguard: true, Duelist: true, Strategist: true}}),
+      players: Array.from({length: 6}, () => {
+        return {name:'', Vanguard: true, Duelist: true, Strategist: true}
+      }),
       randomizedTeam: [],
       characters, // Load characters from JSON file
       characterRoles,
@@ -223,9 +216,6 @@ export default {
         ...Array(Strategist).fill('Strategist'),
       ];
 
-      // Shuffle roles to add randomness
-      const shuffledRoles = roles.sort(() => Math.random() - 0.5);
-
       // Clone characters to avoid mutating the original JSON
       const roleCharacters = {
         Vanguard: this.characters.Vanguard.filter(character => !character.disabled),
@@ -236,7 +226,6 @@ export default {
       // Display an error if not enough characters are enabled
       CHARACTER_ROLES.forEach(roleName => {
         if (roleCharacters[roleName].length < this.teamComposition[roleName]) {
-          console.log(roleName);
           this.errorMessages.push("Character error: not enough " + roleName +"s selected");
         }
       });
@@ -247,9 +236,13 @@ export default {
         return;
       }
 
+      // Shuffle roles to add randomness
+      //const shuffledRoles = roles.sort(() => Math.random() - 0.5);
+
       // Assign characters to players
-      this.randomizedTeam = this.players.map((player, index) => {
-        const role = shuffledRoles[index];
+      this.assignRoles();
+      this.randomizedTeam = this.players.map(player => {
+        const role = player.role;
         const characterIndex = Math.floor(Math.random() * roleCharacters[role].length);
         const character = roleCharacters[role].splice(characterIndex, 1)[0];
 
@@ -289,9 +282,153 @@ export default {
         }
       });
       this.desiredRoleCount = currentCounts;
+    },
+
+    // Assign roles to the players and be random when possible
+    assignRoles() {
+      this.players.forEach((player, index) => {
+        if (player.name == '') player.name = "Player " + (index + 1);
+        player.role = '';
+      });
+      var assignablePlayers = this.players;
+      var assignableRoles = CHARACTER_ROLES;
+      var assignedPlayerNames = [];
+      var rolePlayers = new Map(); // A hashmap of the roles to the players available for that role
+      var minimalPlayers = []; // Holds the roles that have just enough possible players
+
+      assignableRoles.forEach(roleName => {
+        rolePlayers.set(roleName, []);
+        if (this.teamComposition[roleName] == this.desiredRoleCount[roleName]) {
+          minimalPlayers.push(roleName);
+        }
+      });
+
+      // Put each player in a role bucket for the roles they would like to do
+      this.populateRoleBuckets(assignablePlayers, assignableRoles, rolePlayers);
+
+      // Do this while there are miminal players within a role assignment
+      while (minimalPlayers.length > 0) {
+        this.fillMinimalRoles(minimalPlayers, rolePlayers, assignedPlayerNames);
+
+        // Remove the assignedPlayers from the assignable players
+        assignablePlayers = assignablePlayers.filter(player => {return !assignedPlayerNames.includes(player.name)})
+        if (this.errorMessages.length > 0) {
+          this.showErrorDialog();
+          return;
+        }
+        //recalculate minimal players and assignableRoles
+        assignableRoles = assignableRoles.filter(item => { return !minimalPlayers.includes(item)});
+        minimalPlayers = [];
+
+        // Put each player in a role bucket for the roles they would like to do
+        this.populateRoleBuckets(assignablePlayers, assignableRoles, rolePlayers);
+
+        // Calculate roles that have minimal players
+        if (assignableRoles) {
+          assignableRoles.forEach(roleName => {
+            if (this.teamComposition[roleName] == rolePlayers.get(roleName).length) {
+              minimalPlayers.push(roleName);
+            }
+          });
+        }
+      }
+      
+      this.randomlyAssignRoles(rolePlayers, assignableRoles);
+      console.log("Finished assigning roles");
+    },
+
+    // Flatten the map of rolePlayers so that each player/role combo is present.
+    // Shuffle the array and fill the roles
+    randomlyAssignRoles(rolePlayers, assignableRoles) {
+      console.log("Randomly assigning roles");
+      var currentAssignments = {}
+      assignableRoles.forEach(role => {currentAssignments[role] = []})
+
+      var eligiableAssignments = [];
+      rolePlayers.forEach((players, role) => {
+        players.forEach(player => {
+          var item = new Map();
+          item.set(role, player);
+          eligiableAssignments.push(item);
+        });
+      });
+
+      var assignedPlayerNames = new Set(); // We can use the {{player.role}} field if we clear after
+      // Assign out roles to players until we have two of each
+      this.shuffleArray(eligiableAssignments);
+      for (var i = 0; i < eligiableAssignments.length; i++) {
+        const role = [...eligiableAssignments[i].keys()][0]
+        const player = eligiableAssignments[i].get(role);
+        const desiredCount = this.teamComposition[role];
+        if (assignedPlayerNames.has(player.name)) continue;
+
+        if (currentAssignments[role].length < desiredCount) {
+          console.log("Assinging player " + player.name + " to " + role);
+          currentAssignments[role].push(player);
+          assignedPlayerNames.add(player.name);
+          player.role = role;
+        }
+
+        // Break if all the desired role numbers are filled
+        if (assignableRoles.every(role => { return desiredCount == currentAssignments[role]})) {
+          break;
+        }
+      }
+
+      //TODO: try a sophisticated method to assign roles and only force if there is no other option
+      
+      //Force last players into a unfilled and undesired roles
+      for (var i = 0; i < eligiableAssignments.length; i++) {
+        const player = [...eligiableAssignments[i].values()][0];
+        if (assignedPlayerNames.has(player.name)) continue;
+        assignableRoles.forEach(role => {
+          const desiredCount = this.teamComposition[role];
+          if (currentAssignments[role].length < desiredCount) {
+            console.log("Forcing player " + player.name + " to " + role);
+            currentAssignments[role].push(player);
+            assignedPlayerNames.add(player.name);
+            player.role = role;
+          }
+        });
+      }
+    },
+
+    // Put the available players into buckets of roles they are willing to do
+    populateRoleBuckets(assignablePlayers, assignableRoles, rolePlayers) {
+      assignableRoles.forEach(roleName => { rolePlayers.set(roleName, []) });
+      assignablePlayers.forEach(player => {
+        assignableRoles.forEach(roleName => {
+          if (player[roleName]) rolePlayers.get(roleName).push(player)
+        });
+      });
+    },
+
+    // Iterate over each of the roles with the minimum required players
+    // Find the players willing to do said role assign that role to that player
+    // Check to see if the player has already been assigned to a role. If so, throw an error
+    // otherwise, assign the character to the role
+    fillMinimalRoles(minimalPlayerRoles, rolePlayers, assignedPlayerNames) {
+      minimalPlayerRoles.forEach(roleName => {
+        if (this.errorMessages.length > 0) return; //prevent double errors
+        rolePlayers.get(roleName).forEach(player => {
+          if (assignedPlayerNames.includes(player.name)) {
+            this.errorMessages.push("It is impossible to assign player roles!");
+          } else {
+            assignedPlayerNames.push(player.name);
+            player.role = roleName;
+          }
+        });
+      });
+    },
+
+    shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
     }
-  },
-};
+  }
+}
 </script>
 
 <style scoped>
