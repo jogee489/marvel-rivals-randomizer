@@ -151,8 +151,7 @@ export default {
   data() {
     return {
       players: Array.from({length: 6}, () => {
-        //return {name:'', Vanguard: true, Duelist: true, Strategist: true}
-        return {name:'', Vanguard: false, Duelist: false, Strategist: false}
+        return {name:'', Vanguard: true, Duelist: true, Strategist: true}
       }),
       randomizedTeam: [],
       characters, // Load characters from JSON file
