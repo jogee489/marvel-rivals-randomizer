@@ -237,8 +237,10 @@ export default {
       }
 
       // Assign characters to players
-      this.assignRoles();
-      if (this.errorMessages.length > 0) {
+      try {
+        this.assignRoles();
+      } catch(e) {
+        this.errorMessages.push(e.message);
         this.showErrorDialog();
         return;
       }
@@ -296,11 +298,18 @@ export default {
         if (player.name == '') player.name = "Player " + (index + 1);
         player.role = ''; // Clear current role assignments
       });
-      var assignablePlayers = this.players;
-      var assignableRoles = CHARACTER_ROLES;
       var rolePlayers = new Map(); // A hashmap of the roles to the players available for that role
       var minimalPlayers = []; // Holds the roles that have just enough possible players
+      // First assign characters that only have one role to play
+      var currentAssignmentCounts = this.assignInstalockPlayerRoles();
 
+      //check assignable roles and assignable players
+      var assignablePlayers = this.players.filter(player => { return !player.role });
+      var assignableRoles = CHARACTER_ROLES.filter(role => {
+        return this.teamComposition[role] > currentAssignmentCounts[role]
+      });
+
+      //We can have minimal if one player instalock and only one other wants the role.
       assignableRoles.forEach(roleName => {
         rolePlayers.set(roleName, []);
         if (this.teamComposition[roleName] == this.desiredRoleCount[roleName]) {
@@ -369,7 +378,7 @@ export default {
         if (player.role.length > 0) continue;
 
         if (currentAssignments[role].length < desiredCount) {
-          console.log("Assigning " + player.name + " to " + role);
+          console.log(player.name + " randomly assigned to " + role);
           currentAssignments[role].push(player);
           player.role = role;
         }
@@ -391,7 +400,7 @@ export default {
         assignableRoles.forEach(role => {
           const desiredCount = this.teamComposition[role];
           if (currentAssignments[role].length < desiredCount) {
-            console.log("Forcing player " + player.name + " to " + role);
+            console.log(player.name + "forced to be " + role);
             currentAssignments[role].push(player);
             player.role = role;
           }
@@ -417,26 +426,55 @@ export default {
     },
 
     /**
+     * Assigns desired roles to players that only want to play one role
+     * @returns a count 
+     */
+    assignInstalockPlayerRoles() {
+      var instalockPlayers = [];
+      this.players.forEach(player => {
+        var roleCount = CHARACTER_ROLES.reduce((counter, role) => 
+          player[role] ? counter += 1 : counter, 0
+        );
+        if (roleCount == 1) instalockPlayers.push(player);
+      });
+
+      var currentAssignments = {};//CHARACTER_ROLES.map(item => {return {role: 0}});
+      CHARACTER_ROLES.forEach(role => {
+        currentAssignments[role] = 0;
+      })
+      instalockPlayers.forEach(player => {
+        CHARACTER_ROLES.forEach(role => {
+          if (!currentAssignments[role]) currentAssignments[role] = 0;
+          if (currentAssignments[role] == this.teamComposition[role]) {
+            throw new Error("Too many people want to instalock " + role);
+          } else if(player[role]) {
+            console.log(player.name + " has instalocked " + role);
+            player.role = role;
+            currentAssignments[role]++;
+            return;
+          }
+        })
+      });
+      return currentAssignments;
+    },
+
+    /**
      * Fill all the roles that have just enough players to sastify the role/player requirement.
      * 
      * @param minimalPlayerRoles an array with the name of each role to be filled
      * @param rolePlayers a map of roles to potential players for that role
      */
     fillMinimalRoles(minimalPlayerRoles, rolePlayers) {
-      try {
-        minimalPlayerRoles.forEach(roleName => {
-          rolePlayers.get(roleName).forEach(player => {
-            if (player.role) {
-              throw new Error("It is impossible to assign player roles!");
-            } else {
-              console.log("Requiring " + player.name + " to " + roleName);
-              player.role = roleName;
-            }
-          });
+      minimalPlayerRoles.forEach(roleName => {
+        rolePlayers.get(roleName).forEach(player => {
+          if (player.role) {
+            throw new Error("It is impossible to assign player roles!");
+          } else {
+            console.log(player.name + " required to be " + roleName);
+            player.role = roleName;
+          }
         });
-      } catch (e) {
-        this.errorMessages.push(e.message);
-      }
+      });
     },
 
     /**
