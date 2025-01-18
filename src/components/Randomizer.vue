@@ -309,7 +309,7 @@ export default {
         return this.teamComposition[role] > currentAssignmentCounts[role]
       });
 
-      //We can have minimal if one player instalock and only one other wants the role.
+      // We can have minimal if one player instalock and only one other wants the role.
       assignableRoles.forEach(roleName => {
         rolePlayers.set(roleName, []);
         if (this.teamComposition[roleName] == this.desiredRoleCount[roleName]) {
@@ -323,10 +323,6 @@ export default {
       // Do this while there are miminal players within a role assignment
       while (minimalPlayers.length > 0) {
         this.fillMinimalRoles(minimalPlayers, rolePlayers);
-        if (this.errorMessages.length > 0) {
-          this.showErrorDialog();
-          return;
-        }
 
         // Recalculate what is assignable
         assignablePlayers = assignablePlayers.filter(player => { return !player.role });
@@ -344,7 +340,7 @@ export default {
         }
       }
       if (assignableRoles.length > 0) {
-        this.randomlyAssignRoles(rolePlayers, assignableRoles);
+        this.randomlyAssignRoles(rolePlayers, assignableRoles, currentAssignmentCounts);
       }
       console.log("Finished assigning roles");
     },
@@ -354,11 +350,9 @@ export default {
      * requirements are unfulfilled
      * @param rolePlayers a Map of roles to arrays of players that prefer said role
      * @param assignableRoles an array of the names of roles that can be assigned
+     * @param currentAssignmentCounts a map of role to count of players assigned to that role
      */
-    randomlyAssignRoles(rolePlayers, assignableRoles) {
-      var currentAssignments = {}
-      assignableRoles.forEach(role => {currentAssignments[role] = []})
-
+    randomlyAssignRoles(rolePlayers, assignableRoles, currentAssignmentCounts) {
       // Flatten the map of rolePlayers so that each role/player combo is present once in the array
       var eligiableAssignments = [];
       rolePlayers.forEach((players, role) => {
@@ -377,21 +371,21 @@ export default {
         const desiredCount = this.teamComposition[role];
         if (player.role.length > 0) continue;
 
-        if (currentAssignments[role].length < desiredCount) {
+        if (currentAssignmentCounts[role] < desiredCount) {
           console.log(player.name + " randomly assigned to " + role);
-          currentAssignments[role].push(player);
+          currentAssignmentCounts[role]++;
           player.role = role;
         }
 
         // Break if all the desired role numbers are filled
-        if (assignableRoles.every(role => { return desiredCount == currentAssignments[role]})) {
+        if (assignableRoles.every(role => { return desiredCount == currentAssignmentCounts[role]})) {
           break;
         }
       }
 
       //TODO: try a sophisticated method to assign roles and only force if there is no other option
-      // Iterate over the rolePlayer bucket to see if there is a player that can switch with the
-      // currently unassigned player
+      // Try to find a player to swap roles with the unassigned players.
+      findSwappablePlayer(assignableRoles, currentAssignmentCounts);
 
       // Force last players into a unfilled and undesired roles
       for (var i = 0; i < eligiableAssignments.length; i++) {
@@ -399,9 +393,9 @@ export default {
         if (player.role.length > 0) continue;
         assignableRoles.forEach(role => {
           const desiredCount = this.teamComposition[role];
-          if (currentAssignments[role].length < desiredCount) {
-            console.log(player.name + "forced to be " + role);
-            currentAssignments[role].push(player);
+          if (currentAssignmentCounts[role] < desiredCount) {
+            console.log(player.name + " forced to be " + role);
+            currentAssignmentCounts[role]++;
             player.role = role;
           }
         });
@@ -427,7 +421,7 @@ export default {
 
     /**
      * Assigns desired roles to players that only want to play one role
-     * @returns a count 
+     * @returns a map of roles to the number of players assigned to that role 
      */
     assignInstalockPlayerRoles() {
       var instalockPlayers = [];
@@ -438,24 +432,23 @@ export default {
         if (roleCount == 1) instalockPlayers.push(player);
       });
 
-      var currentAssignments = {};//CHARACTER_ROLES.map(item => {return {role: 0}});
+      var currentAssignmentCounts = {};
       CHARACTER_ROLES.forEach(role => {
-        currentAssignments[role] = 0;
+        currentAssignmentCounts[role] = 0;
       })
       instalockPlayers.forEach(player => {
         CHARACTER_ROLES.forEach(role => {
-          if (!currentAssignments[role]) currentAssignments[role] = 0;
-          if (currentAssignments[role] == this.teamComposition[role]) {
+          if (currentAssignmentCounts[role] == this.teamComposition[role]) {
             throw new Error("Too many people want to instalock " + role);
           } else if(player[role]) {
             console.log(player.name + " has instalocked " + role);
             player.role = role;
-            currentAssignments[role]++;
+            currentAssignmentCounts[role]++;
             return;
           }
         })
       });
-      return currentAssignments;
+      return currentAssignmentCounts;
     },
 
     /**
@@ -472,6 +465,35 @@ export default {
           } else {
             console.log(player.name + " required to be " + roleName);
             player.role = roleName;
+          }
+        });
+      });
+    },
+
+    findSwappablePlayer(assignableRoles, currentAssignmentCounts) {
+      var unassignedPlayers = this.players.filter(player => {return !player.role});
+      var unassignedRoles = assignableRoles.filter(role => {
+        return this.teamComposition[role] > currentAssignmentCounts[role];
+      });
+      unassignedPlayers.forEach(emptyPlayer => {
+        assignableRoles.forEach(possibleRole => {
+          if (emptyPlayer[possibleRole]) {
+            // find a player to swap with the unassigned player
+            rolePlayers.get(possibleRole).forEach(player => {
+              unassignedRoles.forEach(emptyRole => {
+                const desiredCount = this.teamComposition[emptyRole];
+                if (assignableRoles.every(role => {return desiredCount == currentAssignmentCounts[role]})) {
+                  return;
+                }
+                if (player[emptyRole]) {
+                  console.log(emptyPlayer.name + " is taking over " + player.role + " from " + player.name);
+                  console.log(player.name + " is switching to " + emptyRole);
+                  emptyPlayer.role = possibleRole;
+                  player.role = emptyRole;
+                  currentAssignmentCounts[emptyRole]++;
+                }
+              });
+            })
           }
         });
       });
