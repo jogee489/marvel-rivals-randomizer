@@ -385,7 +385,7 @@ export default {
 
       //TODO: try a sophisticated method to assign roles and only force if there is no other option
       // Try to find a player to swap roles with the unassigned players.
-      findSwappablePlayer(assignableRoles, currentAssignmentCounts);
+      this.findSwappablePlayer(rolePlayers, assignableRoles, currentAssignmentCounts);
 
       // Force last players into a unfilled and undesired roles
       for (var i = 0; i < eligiableAssignments.length; i++) {
@@ -470,7 +470,7 @@ export default {
       });
     },
 
-    findSwappablePlayer(assignableRoles, currentAssignmentCounts) {
+    findSwappablePlayer(rolePlayers, assignableRoles, currentAssignmentCounts) {
       var unassignedPlayers = this.players.filter(player => {return !player.role});
       var unassignedRoles = assignableRoles.filter(role => {
         return this.teamComposition[role] > currentAssignmentCounts[role];
@@ -485,7 +485,7 @@ export default {
                 if (assignableRoles.every(role => {return desiredCount == currentAssignmentCounts[role]})) {
                   return;
                 }
-                if (player[emptyRole]) {
+                if (player[emptyRole] && player.role != emptyRole) {
                   console.log(emptyPlayer.name + " is taking over " + player.role + " from " + player.name);
                   console.log(player.name + " is switching to " + emptyRole);
                   emptyPlayer.role = possibleRole;
