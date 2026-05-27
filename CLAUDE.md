@@ -29,7 +29,11 @@ npm run preview   # Preview production build
 npm run lint      # ESLint with auto-fix
 ```
 
-No test suite is configured.
+```bash
+npm test            # Run Vitest unit tests
+```
+
+Tests live in `src/utils/__tests__/`. Vitest is configured via `vitest.config.mjs`.
 
 ## Architecture
 
@@ -44,5 +48,7 @@ Vue 3 + Vuetify 3 app. Team composition randomizer for Marvel Rivals — users e
 4. `findSwappablePlayer()` — swap to satisfy composition constraints
 
 State is local to `Randomizer.vue`; Pinia store (`src/stores/app.js`) is currently unused.
+
+**Role assignment logic** lives in `src/utils/roleAssignment.js` as pure functions. The exported `assignRoles(players, teamComposition, playerAvailability, roleNames)` modifies `player.role` in-place across four phases.
 
 **Key config**: `vite.config.mjs` sets base path to `/marvel-rivals-randomizer/` and uses auto-imports for Vue, Vue Router, and Vuetify. Path alias `@/` maps to `src/`.
