@@ -23,7 +23,7 @@ const IMAGES_DIR = path.join(__dirname, '../public/assets/images');
 const CHARACTERS_JSON = path.join(__dirname, '../src/data/characters.json');
 const IMAGE_BASE_PATH = '/marvel-rivals-randomizer/assets/images';
 const API_BASE = 'https://marvelrivalsapi.com';
-const HEROES_ENDPOINT = `${API_BASE}/api/v1/heroes`;
+const HEROES_ENDPOINT = `${API_BASE}/api/v2/heroes`;
 
 const API_KEY = process.env.MARVEL_RIVALS_API_KEY;
 const DRY_RUN = process.argv.includes('--dry-run');

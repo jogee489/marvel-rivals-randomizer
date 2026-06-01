@@ -1,0 +1,32 @@
+name: Sync Heroes
+
+on:
+  workflow_dispatch:       # manual trigger from the Actions tab
+  schedule:
+    - cron: '0 9 * * 1'   # every Monday at 9am UTC
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Sync heroes
+        env:
+          MARVEL_RIVALS_API_KEY: ${{ secrets.MARVEL_RIVALS_API_KEY }}
+        run: node scripts/sync-heroes.mjs
+
+      - name: Commit changes if any
+        run: |
+          git config user.name "JJ Dorko"
+          git config user.email "jdorko90@gmail.com"
+          git add public/assets/images/ src/data/characters.json
+          git diff --cached --quiet || git commit -m "chore: sync heroes from Marvel Rivals API"
+          git push
