@@ -92,10 +92,14 @@ function randomlyAssignRoles(rolePlayers, assignableRoles, counts, teamCompositi
 
   findSwappablePlayer(players, rolePlayers, assignableRoles, counts, teamComposition);
 
+  // Last-resort: assign remaining players to any open slot they prefer.
+  // Players who still have no role after this are caught by the force-assign
+  // in assignRoles, which ignores preferences entirely.
   for (let i = 0; i < eligible.length; i++) {
     const { player } = eligible[i];
     if (player.role) continue;
     assignableRoles.forEach(role => {
+      if (!player[role]) return;
       if (counts[role] < teamComposition[role]) {
         counts[role]++;
         player.role = role;

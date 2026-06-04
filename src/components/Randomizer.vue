@@ -48,7 +48,7 @@
               <v-text-field
                 v-for="role in characterRoles"
                 :key="role.name"
-                v-model="teamComposition[role.name]"
+                v-model.number="teamComposition[role.name]"
                 :label="role.name"
                 type="number"
                 min="0"
@@ -90,7 +90,7 @@
                     max-width="80"
                     class="mx-auto"
                   ></v-img>
-                  <v-card-title class="text-h6">{{ assignment.player.name }}</v-card-title>
+                  <v-card-title class="text-h6">{{ assignment.playerName }}</v-card-title>
                   <v-card-subtitle class="text-body-2">{{ assignment.role }}</v-card-subtitle>
                   <v-card-subtitle class="text-body-2">{{ assignment.name }}</v-card-subtitle>
                 </v-card>
@@ -127,10 +127,15 @@ import characters from '@/data/characters.json';
 import characterRolesData from '@/data/character_roles.json';
 import CharacterSelecter from '@/components/CharacterSelecter.vue';
 import { assignRoles } from '@/utils/roleAssignment.js';
+import { useCharacterStore } from '@/stores/app.js';
 
 const CHARACTER_ROLES = characterRolesData.map(r => r.name);
 
 export default {
+  setup() {
+    const characterStore = useCharacterStore();
+    return { characterStore };
+  },
   data() {
     return {
       players: Array.from({ length: 6 }, () => ({
@@ -165,13 +170,14 @@ export default {
     },
 
     randomizeTeam() {
+      this.validateComposition();
       this.errorMessages = [];
       this.randomizedTeam = [];
 
       const roleCharacters = Object.fromEntries(
         CHARACTER_ROLES.map(role => [
           role,
-          this.characters[role].filter(c => !c.disabled),
+          this.characters[role].filter(c => !this.characterStore.isDisabled(c.name)),
         ])
       );
 
@@ -209,12 +215,12 @@ export default {
       }
 
       const roleOrder = Object.fromEntries(CHARACTER_ROLES.map((r, i) => [r, i]));
-      this.randomizedTeam = this.players.map(player => {
+      this.randomizedTeam = this.players.map((player, i) => {
         const role = player.role;
         const pool = roleCharacters[role];
         const idx = Math.floor(Math.random() * pool.length);
         const character = pool.splice(idx, 1)[0];
-        return { player, role, name: character.name, image: character.image };
+        return { playerName: player.name || `Player ${i + 1}`, role, name: character.name, image: character.image };
       });
       this.randomizedTeam.sort((a, b) => roleOrder[a.role] - roleOrder[b.role]);
     },

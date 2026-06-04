@@ -36,6 +36,11 @@ if (!API_KEY) {
   process.exit(1);
 }
 
+if (ICONS_ONLY && DATA_ONLY) {
+  console.error('Error: --icons-only and --data-only are mutually exclusive.');
+  process.exit(1);
+}
+
 // Maps API role names → our role names (handles whatever the API returns)
 const ROLE_MAP = {
   vanguard: 'Vanguard',
@@ -131,9 +136,7 @@ async function main() {
       const filename = `${stem}${ext}`;
       const destPath = path.join(IMAGES_DIR, filename);
 
-      if (fs.existsSync(destPath)) {
-        skipped++;
-      } else if (DRY_RUN) {
+      if (DRY_RUN) {
         console.log(`  img  would download  ${filename}`);
         downloaded++;
       } else {
