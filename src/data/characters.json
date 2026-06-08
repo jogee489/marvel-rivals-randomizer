@@ -1,45 +1,212 @@
 {
     "Vanguard": [
-      { "name": "Venom", "image": "/marvel-rivals-randomizer/assets/images/venom.png" },
-      { "name": "Peni Parker", "image": "/marvel-rivals-randomizer/assets/images/peni_parker.png" },
-      { "name": "Thor", "image": "/marvel-rivals-randomizer/assets/images/thor.png" },
-      { "name": "Doctor Strange", "image": "/marvel-rivals-randomizer/assets/images/doctor_strange.png" },
-      { "name": "Captain America", "image": "/marvel-rivals-randomizer/assets/images/captain_america.png" },
-      { "name": "Hulk", "image": "/marvel-rivals-randomizer/assets/images/hulk.png" },
-      { "name": "Groot", "image": "/marvel-rivals-randomizer/assets/images/groot.png" },
-      { "name": "Magneto", "image": "/marvel-rivals-randomizer/assets/images/magneto.png" }
+        {
+            "name": "Venom",
+            "image": "/marvel-rivals-randomizer/assets/images/venom.png"
+        },
+        {
+            "name": "Peni Parker",
+            "image": "/marvel-rivals-randomizer/assets/images/peni_parker.png"
+        },
+        {
+            "name": "Thor",
+            "image": "/marvel-rivals-randomizer/assets/images/thor.png"
+        },
+        {
+            "name": "Doctor Strange",
+            "image": "/marvel-rivals-randomizer/assets/images/doctor_strange.png"
+        },
+        {
+            "name": "Captain America",
+            "image": "/marvel-rivals-randomizer/assets/images/captain_america.png"
+        },
+        {
+            "name": "Hulk",
+            "image": "/marvel-rivals-randomizer/assets/images/hulk.png"
+        },
+        {
+            "name": "Groot",
+            "image": "/marvel-rivals-randomizer/assets/images/groot.png"
+        },
+        {
+            "name": "Magneto",
+            "image": "/marvel-rivals-randomizer/assets/images/magneto.png"
+        },
+        {
+            "name": "the thing",
+            "image": "/marvel-rivals-randomizer/assets/images/the_thing.png"
+        },
+        {
+            "name": "emma frost",
+            "image": "/marvel-rivals-randomizer/assets/images/emma_frost.png"
+        },
+        {
+            "name": "Angela",
+            "image": "/marvel-rivals-randomizer/assets/images/angela.png"
+        },
+        {
+            "name": "Devil Dinosaur",
+            "image": "/marvel-rivals-randomizer/assets/images/devil_dinosaur.png"
+        },
+        {
+            "name": "Rogue",
+            "image": "/marvel-rivals-randomizer/assets/images/rogue.png"
+        }
     ],
     "Duelist": [
-      { "name": "The Punisher", "image": "/marvel-rivals-randomizer/assets/images/the_punisher.png" },
-      { "name": "Moon Knight", "image": "/marvel-rivals-randomizer/assets/images/moon_knight.png" },
-      { "name": "Iron Man", "image": "/marvel-rivals-randomizer/assets/images/iron_man.png" },
-      { "name": "Scarlet Witch", "image": "/marvel-rivals-randomizer/assets/images/scarlet_witch.png" },
-      { "name": "Star-Lord", "image": "/marvel-rivals-randomizer/assets/images/star_lord.png" },
-      { "name": "Hawkeye", "image": "/marvel-rivals-randomizer/assets/images/hawkeye.png" },
-      { "name": "Psylocke", "image": "/marvel-rivals-randomizer/assets/images/psylocke.png" },
-      { "name": "Winter Soldier", "image": "/marvel-rivals-randomizer/assets/images/winter_soldier.png" },
-      { "name": "Spider-Man", "image": "/marvel-rivals-randomizer/assets/images/spider_man.png" },
-      { "name": "Hela", "image": "/marvel-rivals-randomizer/assets/images/hela.png" },
-      { "name": "Iron Fist", "image": "/marvel-rivals-randomizer/assets/images/iron_fist.png" },
-      { "name": "Magik", "image": "/marvel-rivals-randomizer/assets/images/magik.png" },
-      { "name": "Squirrel Girl", "image": "/marvel-rivals-randomizer/assets/images/squirrel_girl.png" },
-      { "name": "Black Panther", "image": "/marvel-rivals-randomizer/assets/images/black_panther.png" },
-      { "name": "Wolverine", "image": "/marvel-rivals-randomizer/assets/images/wolverine.png" },
-      { "name": "Black Widow", "image": "/marvel-rivals-randomizer/assets/images/black_widow.png" },
-      { "name": "Namor", "image": "/marvel-rivals-randomizer/assets/images/namor.png" },
-      { "name": "Storm", "image": "/marvel-rivals-randomizer/assets/images/storm.png" },
-      { "name": "Mr. Fantastic", "image": "/marvel-rivals-randomizer/assets/images/mr_fantastic.png" }
-
+        {
+            "name": "The Punisher",
+            "image": "/marvel-rivals-randomizer/assets/images/the_punisher.png"
+        },
+        {
+            "name": "Moon Knight",
+            "image": "/marvel-rivals-randomizer/assets/images/moon_knight.png"
+        },
+        {
+            "name": "Iron Man",
+            "image": "/marvel-rivals-randomizer/assets/images/iron_man.png"
+        },
+        {
+            "name": "Scarlet Witch",
+            "image": "/marvel-rivals-randomizer/assets/images/scarlet_witch.png"
+        },
+        {
+            "name": "Star-Lord",
+            "image": "/marvel-rivals-randomizer/assets/images/star_lord.png"
+        },
+        {
+            "name": "Hawkeye",
+            "image": "/marvel-rivals-randomizer/assets/images/hawkeye.png"
+        },
+        {
+            "name": "Psylocke",
+            "image": "/marvel-rivals-randomizer/assets/images/psylocke.png"
+        },
+        {
+            "name": "Winter Soldier",
+            "image": "/marvel-rivals-randomizer/assets/images/winter_soldier.png"
+        },
+        {
+            "name": "Spider-Man",
+            "image": "/marvel-rivals-randomizer/assets/images/spider_man.png"
+        },
+        {
+            "name": "Hela",
+            "image": "/marvel-rivals-randomizer/assets/images/hela.png"
+        },
+        {
+            "name": "Iron Fist",
+            "image": "/marvel-rivals-randomizer/assets/images/iron_fist.png"
+        },
+        {
+            "name": "Magik",
+            "image": "/marvel-rivals-randomizer/assets/images/magik.png"
+        },
+        {
+            "name": "Squirrel Girl",
+            "image": "/marvel-rivals-randomizer/assets/images/squirrel_girl.png"
+        },
+        {
+            "name": "Black Panther",
+            "image": "/marvel-rivals-randomizer/assets/images/black_panther.png"
+        },
+        {
+            "name": "Wolverine",
+            "image": "/marvel-rivals-randomizer/assets/images/wolverine.png"
+        },
+        {
+            "name": "Black Widow",
+            "image": "/marvel-rivals-randomizer/assets/images/black_widow.png"
+        },
+        {
+            "name": "Namor",
+            "image": "/marvel-rivals-randomizer/assets/images/namor.png"
+        },
+        {
+            "name": "Storm",
+            "image": "/marvel-rivals-randomizer/assets/images/storm.png"
+        },
+        {
+            "name": "Mr. Fantastic",
+            "image": "/marvel-rivals-randomizer/assets/images/mr_fantastic.png"
+        },
+        {
+            "name": "human torch",
+            "image": "/marvel-rivals-randomizer/assets/images/human_torch.png"
+        },
+        {
+            "name": "mister fantastic",
+            "image": "/marvel-rivals-randomizer/assets/images/mister_fantastic.png"
+        },
+        {
+            "name": "blade",
+            "image": "/marvel-rivals-randomizer/assets/images/blade.png"
+        },
+        {
+            "name": "phoenix",
+            "image": "/marvel-rivals-randomizer/assets/images/phoenix.png"
+        },
+        {
+            "name": "Daredevil",
+            "image": "/marvel-rivals-randomizer/assets/images/daredevil.png"
+        },
+        {
+            "name": "Deadpool",
+            "image": "/marvel-rivals-randomizer/assets/images/deadpool.png"
+        },
+        {
+            "name": "Elsa Bloodstone",
+            "image": "/marvel-rivals-randomizer/assets/images/elsa_bloodstone.png"
+        },
+        {
+            "name": "Black Cat",
+            "image": "/marvel-rivals-randomizer/assets/images/black_cat.png"
+        }
     ],
     "Strategist": [
-      { "name": "Jeff the Land Shark", "image": "/marvel-rivals-randomizer/assets/images/jeff_the_land_shark.png" },
-      { "name": "Cloak & Dagger", "image": "/marvel-rivals-randomizer/assets/images/cloak_and_dagger.png" },
-      { "name": "Mantis", "image": "/marvel-rivals-randomizer/assets/images/mantis.png" },
-      { "name": "Luna Snow", "image": "/marvel-rivals-randomizer/assets/images/luna_snow.png" },
-      { "name": "Rocket Raccoon", "image": "/marvel-rivals-randomizer/assets/images/rocket_raccoon.png" },
-      { "name": "Loki", "image": "/marvel-rivals-randomizer/assets/images/loki.png" },
-      { "name": "Adam Warlock", "image": "/marvel-rivals-randomizer/assets/images/adam_warlock.png" },
-      { "name": "Invisible Woman", "image": "/marvel-rivals-randomizer/assets/images/invisible_woman.png" }
+        {
+            "name": "Jeff the Land Shark",
+            "image": "/marvel-rivals-randomizer/assets/images/jeff_the_land_shark.png"
+        },
+        {
+            "name": "Cloak & Dagger",
+            "image": "/marvel-rivals-randomizer/assets/images/cloak_and_dagger.png"
+        },
+        {
+            "name": "Mantis",
+            "image": "/marvel-rivals-randomizer/assets/images/mantis.png"
+        },
+        {
+            "name": "Luna Snow",
+            "image": "/marvel-rivals-randomizer/assets/images/luna_snow.png"
+        },
+        {
+            "name": "Rocket Raccoon",
+            "image": "/marvel-rivals-randomizer/assets/images/rocket_raccoon.png"
+        },
+        {
+            "name": "Loki",
+            "image": "/marvel-rivals-randomizer/assets/images/loki.png"
+        },
+        {
+            "name": "Adam Warlock",
+            "image": "/marvel-rivals-randomizer/assets/images/adam_warlock.png"
+        },
+        {
+            "name": "Invisible Woman",
+            "image": "/marvel-rivals-randomizer/assets/images/invisible_woman.png"
+        },
+        {
+            "name": "ultron",
+            "image": "/marvel-rivals-randomizer/assets/images/ultron.png"
+        },
+        {
+            "name": "Gambit",
+            "image": "/marvel-rivals-randomizer/assets/images/gambit.png"
+        },
+        {
+            "name": "White Fox",
+            "image": "/marvel-rivals-randomizer/assets/images/white_fox.png"
+        }
     ]
-  }
-  
+}
